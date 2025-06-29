@@ -34,6 +34,11 @@ namespace BlogStore.DataAccessLayer.EntityFramework
             return _context.Articles.Where(x => x.AppUserId == id).ToList();
         }
 
+        public Article GetArticleBySlug(string slug)
+        {
+            return _context.Articles.Include(x => x.AppUser).Include(x => x.category).FirstOrDefault(x => x.Slug == slug);
+        }
+
         public Article GetArticleWithUser(int id)
         {
             return _context.Articles.Include(x => x.AppUser).FirstOrDefault(x => x.ArticleId == id);
