@@ -14,18 +14,11 @@ namespace BlogStore.PresentationLayer.Controllers
         private readonly ICommentService _commentService;
         private readonly UserManager<AppUser> _userManager;
 
-        public CommentController(UserManager<AppUser> userManager)
-        {
-            _userManager = userManager;
-        }
-
-        public CommentController(ICommentService commentService)
+        public CommentController(ICommentService commentService, UserManager<AppUser> userManager)
         {
             _commentService = commentService;
+            _userManager = userManager;
         }
-
-
-
 
         public IActionResult CommentList()
         {
@@ -39,13 +32,13 @@ namespace BlogStore.PresentationLayer.Controllers
             return View();
         }
 
-        [HttpPost]
 
+
+        [HttpPost]
         public IActionResult CreateComment(Comment comment)
         {
             comment.CommentDate = DateTime.Now;
             comment.IsValid = false;
-
             _commentService.TInsert(comment);
             return RedirectToAction("CommentList");
         }
@@ -74,8 +67,6 @@ namespace BlogStore.PresentationLayer.Controllers
             return RedirectToAction("CommentList");
         }
 
-
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> AddCommentAjax(int articleId, string commentDetail)
@@ -103,7 +94,7 @@ namespace BlogStore.PresentationLayer.Controllers
                     CommentDate = DateTime.Now,
                     AppUserId = user.Id,
                     UserNameSurname = user.name + " " + user.surname,
-                    IsValid = true // Login olan kullanıcılar için otomatik onay
+                    IsValid = true
                 };
 
                 _commentService.TInsert(comment);
@@ -133,7 +124,8 @@ namespace BlogStore.PresentationLayer.Controllers
         public IActionResult GetCommentsByArticle(int articleId)
         {
             var comments = _commentService.TGetCommentsByArticle(articleId);
-            var commentList = comments.Select(c => new {
+            var commentList = comments.Select(c => new
+            {
                 userNameSurname = c.AppUser.name + " " + c.AppUser.surname,
                 commentDetail = c.CommentDetail,
                 commentDate = c.CommentDate.ToString("dd-MMM-yyyy"),
@@ -141,11 +133,12 @@ namespace BlogStore.PresentationLayer.Controllers
             });
 
             return Json(new { success = true, comments = commentList });
+
+
         }
 
-
     }
-    }
+}
 
 
 

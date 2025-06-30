@@ -15,6 +15,7 @@ namespace BlogStore.PresentationLayer.ViewComponents
         public IViewComponentResult Invoke(int id)
         {
             var values = _commentService.TGetCommentsByArticle(id);
+            ViewBag.ArticleId = id;
             return View(values);
         }
     }
