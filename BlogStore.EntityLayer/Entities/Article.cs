@@ -14,8 +14,6 @@ namespace BlogStore.EntityLayer.Entities
         public string ImageUrl { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        public string Slug { get; set; }
-
         public int CategoryId { get; set; }
 
         public Category category { get; set; }
@@ -24,5 +22,7 @@ namespace BlogStore.EntityLayer.Entities
         public AppUser AppUser { get; set; }
 
         public List<Comment> Comments { get; set; }
+
+        public string Slug { get; set; }
     }
 }

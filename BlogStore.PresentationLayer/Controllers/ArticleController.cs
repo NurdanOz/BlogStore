@@ -1,5 +1,8 @@
 ﻿using BlogStore.BusinessLayer.Abstract;
+using BlogStore.BusinessLayer.Helpers;
+using BlogStore.EntityLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
+using BlogStore.BusinessLayer.Helpers;
 
 namespace BlogStore.PresentationLayer.Controllers
 {
@@ -25,5 +28,7 @@ namespace BlogStore.PresentationLayer.Controllers
             ViewBag.i = article.ArticleId;
             return View();
         }
+
+        
     }
 }

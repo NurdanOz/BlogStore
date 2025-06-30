@@ -10,14 +10,14 @@
                 @foreach(var item in Model)
                 {
                     <div class="blog-entry d-flex blog-entry-search-item">
-                        <a href="/Article/ArticleDetail/@item.ArticleId" class="img-link me-4">
+                        <a href="/Article/ArticleDetail/@item.Slug" class="img-link me-4">
                             <img src="@item.ImageUrl" alt="Image" class="img-fluid">
                         </a>
                         <div>
                             <span class="date">@item.CreatedDate.ToString("dd-MMM-yyyy") &bullet; <a href="#">@item.category.CategoryName</a></span>
-                            <h2><a href="/Article/ArticleDetail/@item.ArticleId">@item.Title</a></h2>
+                            <h2><a href="/Article/ArticleDetail/@item.Slug">@item.Title</a></h2>
                             <p>@item.Description.Substring(0,100)...</p>
-                            <p><a href="/Article/ArticleDetail/@item.ArticleId" class="btn btn-sm btn-outline-primary">Devamını Oku...</a></p>
+                            <p><a href="/Article/ArticleDetail/@item.Slug" class="btn btn-sm btn-outline-primary">Devamını Oku...</a></p>
                         </div>
                     </div>
                 }              
