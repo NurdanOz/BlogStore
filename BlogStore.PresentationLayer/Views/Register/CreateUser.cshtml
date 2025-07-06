@@ -1,0 +1,30 @@
+﻿@using BlogStore.PresentationLayer.Controllers.Models
+@model UserRegisterViewModel
+
+@{
+    Layout = null;
+}
+
+builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<BlogContext>();
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<form method="post">
+<div class="container">
+    <br /><br />
+    <label>Adınız</label>
+    <input type="text" asp-for="Name" class="form-control" />
+    <br />
+    <label>Soyadınız</label>
+    <input type="text" asp-for="Surname" class="form-control" />
+    <br />
+    <label>Email Adresi</label>
+    <input type="text" asp-for="Email" class="form-control" />
+    <br />
+    <label>Kullanıcı Adınız</label>
+    <input type="text" asp-for="Username" class="form-control" />
+    <br />
+    <label>Şifreniz</label>
+    <input type="text" asp-for="Password" class="form-control" />
+    <br />
+    <button class="btn btn-primary">Kullanıcı Oluştur</button>
+</div>
+</form>

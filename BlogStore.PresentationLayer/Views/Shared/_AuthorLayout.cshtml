@@ -1,0 +1,249 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using BlogStore.EntityLayer.Entities;
+@inject SignInManager<AppUser> SignInManager;
+
+@{
+    Layout = null;
+ }
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Booststrap Example</title> 
+
+    <link rel="shortcut icon" type="image/png" href="~/flexy-bootstrap-lite-1.0.0/assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="~/flexy-bootstrap-lite-1.0.0/assets/css/styles.min.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .body-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-fluid {
+            flex: 1;
+        }
+    </style>
+
+
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
+
+        <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
+                <a class="d-flex justify-content-center" href="#">
+                    <h3 class="fw-bold text-white mb-0 fs-6">Blogy</h3> 
+                </a>
+            </div>
+
+            <div class="d-lg-flex align-items-center gap-2">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="dropdown d-flex">
+                        <a class="text-white d-flex align-items-center gap-1 " href="javascript:void(0)" id="drop4"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ti ti-user fs-5"></i>
+                            Profilim
+                            <i class="ti ti-chevron-down fs-5"></i>
+                        </a>
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <div class="dropdown d-flex">                                
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop4">
+                                    <div class="p-4">
+                                        <a href="/Author/Profile/" class="d-flex align-items-center gap-2 dropdown-item">
+                                           
+                                            <i class="ti ti-user-circle"></i>
+                                            <p class="mb-0 fs-3">Profilimi Görüntüle</p>
+                                        </a>
+                                        <a href="/Author/Profile/" class="d-flex align-items-center gap-2 dropdown-item">
+                                           
+                                            <i class="ti ti-lock fs-6"></i>
+                                            <p class="mb-0 fs-3">Şifre Değiştir</p>
+                                        </a>
+                                        <a href="/Author/Profile/" class="d-flex align-items-center gap-2 dropdown-item">
+                                           
+                                            <i class="ti ti-photo fs-6"></i>
+                                            <p class="mb-0 fs-3">Resim Değiştir</p>
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        @* ⭐ DEĞİŞİKLİK 1: DROPDOWN İÇİNDEKİ ÇIKIŞ BUTONU ⭐ *@
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <form asp-controller="Login" asp-action="Logout" method="post" id="logoutFormDropdown" class="w-100">
+                                                <button type="submit" class="btn btn-outline-primary mt-4 w-100">Çıkış Yap</button>
+                                                <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Login/UserLogin" class="btn btn-primary mt-4 w-100">Giriş Yap</a>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <aside class="left-sidebar">
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="~/Home/Dashboard" class="text-nowrap logo-img">
+                        
+                        <img src="~/flexy-bootstrap-lite-1.0.0/assets/images/logos/blogger.png" alt="blogger" style="max-width: 150px; height: auto; display: block;" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-6"></i>
+                    </div>
+                </div>
+                <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+                    <ul id="sidebarnav">
+                      
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="~/Default/Index" aria-expanded="false">
+                               
+                                <i class="ti ti-atom"></i>
+                                <span class="hide-menu">Ana Sayfa</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link justify-content-between" href="~/Author/CreateArticle/" aria-expanded="false">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-flex">
+                                        <i class="ti ti-aperture"></i>
+                                    </span>
+                                    <span class="hide-menu">Yeni Blog</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link justify-content-between" href="~/Author/MyArticleList" aria-expanded="false">
+                               
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-flex">
+                                        <i class="ti ti-layout-list"></i>
+                                    </span>
+                                    <span class="hide-menu">Blog Listem</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link justify-content-between" href="~/Author/Profile" aria-expanded="false">
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-flex">
+                                        <i class="ti ti-user-circle"></i>
+                                    </span>
+                                    <span class="hide-menu">Profilim</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link justify-content-between" href="~/Category/CategoryList/" aria-expanded="false">
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-flex">
+                                        <i class="ti ti-tags"></i>
+                                    </span>
+                                    <span class="hide-menu">Kategoriler</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link justify-content-between" href="~/Comment/CommentList/" aria-expanded="false">
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-flex">
+                                        <i class="ti ti-message-circle"></i>
+                                    </span>
+                                    <span class="hide-menu">Yorum Listesi</span>
+                                </div>
+                            </a>
+                        </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="sidebar-item">
+                                <form asp-controller="Login" asp-action="Logout" method="post" id="logoutFormLeftMenu" class="w-100">
+                                    <button type="submit" class="sidebar-link justify-content-between btn btn-link text-dark" aria-expanded="false" style="width:100%; text-align:left; padding: .625rem 25px;">
+                                        @* Padding ayarını ekledim *@
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="d-flex">
+                                                <i class="ti ti-door-exit"></i>
+                                            </span>
+                                            <span class="hide-menu">Çıkış Yap</span>
+                                        </div>
+                                    </button>
+                                    <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="sidebar-item">
+                                <a class="sidebar-link justify-content-between" href="/Login/UserLogin" aria-expanded="false">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="d-flex">
+                                            <i class="ti ti-login"></i>
+                                        </span>
+                                        <span class="hide-menu">Giriş Yap</span>
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <div class="body-wrapper">
+          
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+
+            <div id="main-footer" class="py-6 px-6 text-center">
+                <p class="mb-0 fs-4">Design and Developed by <a href="https://adminmart.com/" target="_blank" class="pe-1 text-primary text-decoration-underline">AdminMart.com</a> Distributed by <a href="https://themewagon.com">ThemeWagon</a></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/js/sidebarmenu.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/js/app.min.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="~/flexy-bootstrap-lite-1.0.0/assets/js/dashboard.js"></script>
+
+
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>
+
+   

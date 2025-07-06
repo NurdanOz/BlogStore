@@ -1,0 +1,55 @@
+﻿@model List<BlogStore.EntityLayer.Entities.Comment>
+@{
+    Layout = "~/Views/Shared/_AuthorLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Yorum Listesi</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Yorum Yapan</th>
+                <th>Yorum İçeriği</th>
+                <th>Toksik Skor</th>
+                <th>Toksik mi?</th>
+                <th>Sil</th>
+                <th>Güncelle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CommentId</td>
+                    <td>@item.UserNameSurname</td>
+                    <td>@item.CommentDetail</td>
+                    <td>@item.Score.ToString("0.00")</td>
+                    <td>
+                        @if (item.IsToxic)
+                        {
+                            <span class="badge bg-danger">Toksik</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Temiz</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Comment/DeleteComment/@item.CommentId" class="btn btn-sm btn-danger">
+                            Sil
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Comment/UpdateComment/@item.CommentId" class="btn btn-sm btn-success">
+                            Güncelle
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="/Comment/CreateComment/" class="btn btn-primary">Yeni Yorum Oluştur</a>
+</div>

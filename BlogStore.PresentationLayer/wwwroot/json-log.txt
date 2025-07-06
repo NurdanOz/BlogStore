@@ -1,0 +1,1 @@
+[[{"label":"Very Negative","score":0.30179867148399353},{"label":"Negative","score":0.29696181416511536},{"label":"Neutral","score":0.23290064930915833},{"label":"Positive","score":0.09971131384372711},{"label":"Very Positive","score":0.0686274990439415}]]

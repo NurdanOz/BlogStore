@@ -1,0 +1,22 @@
+﻿@model BlogStore.EntityLayer.Entities.Comment
+@{
+    Layout = "~/Views/Shared/_AuthorLayout.cshtml";
+}
+@* 
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+ *@
+<div class="container mt-5">
+    <form asp-action="UpdateComment" method="post">
+        <input type="hidden" asp-for="CommentId" />
+
+        <label>Yorum Yapanın Adı Soyadı</label>
+        <input asp-for="UserNameSurname" class="form-control" readonly />
+        <br />
+
+        <label>Yorum Detayı</label>
+        <textarea asp-for="CommentDetail" class="form-control"></textarea>
+        <br />
+
+        <button type="submit" class="btn btn-info">Kaydet</button>
+    </form>
+</div>

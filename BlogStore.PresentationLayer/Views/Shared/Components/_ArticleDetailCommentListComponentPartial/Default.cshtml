@@ -1,0 +1,174 @@
+﻿@model List<BlogStore.EntityLayer.Entities.Comment>
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+
+<div class="pt-5 comment-wrap">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h3 class="mb-5 heading">@Model.Count Yorum</h3>
+        <ul class="comment-list" id="commentsList">
+            @foreach (var item in Model)
+            {
+                // Yalnızca IsValid == true olan yorumları göster (eğer toksik yorumları admin onayı bekletiyorsak)
+                @if (item.IsValid == true) // <-- BURAYI EKLEDİK
+                {
+                    <li class="comment">
+                        <div class="vcard">
+                            <img src="@item.AppUser.ımageurl" alt="Image placeholder">
+                        </div>
+                        <div class="comment-body">
+                            <h3>@item.AppUser.name @item.AppUser.surname</h3>
+                            <div class="meta">@item.CommentDate.ToString("dd-MMM-yyyy")</div>
+                            <p>@item.CommentDetail</p>
+                            <p><a href="#" class="reply rounded">Yanıtla</a></p>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="text-muted">Yorumları görebilmek için <a href="/Login/Index">giriş yapmalısınız</a>.</p>
+    }
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="comment-form-wrap pt-5">
+            <h3 class="mb-5">Bir Yorum Bırakın</h3>
+            <form id="commentForm" class="p-5 bg-light" method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="message">Yorumunuz</label>
+                    <textarea name="CommentDetail" id="commentDetailInput" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <input type="hidden" name="ArticleId" id="articleIdInput" value="@ViewBag.ArticleId" />
+                <div class="form-group">
+                    <input type="submit" value="Yorum Yap" class="btn btn-primary" />
+                </div>
+            </form>
+            <div id="commentResult"></div>
+        </div>
+    }
+    else
+    {
+        <div class="comment-form-wrap pt-5">
+            <h3 class="mb-5">Yorum Yapmak İçin Giriş Yapmalısınız</h3>
+            <p>Yorum yapabilmek ve tartışmaya katılabilmek için lütfen <a href="/Login/Index">Giriş Yapın</a> veya <a href="/Register/Index">Kayıt Olun</a>.</p>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        $('#commentForm').submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: "/Comment/AddCommentAjax",
+                type: 'POST',
+                data: form.serialize(),
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (result) {
+                    // Controller'dan gelen 'type' alanına göre farklı işlemler yapıyoruz
+                    if (result.type === "success") { // Toksik olmayan başarılı yorum
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: result.message, // "Yorumunuz başarıyla eklendi!"
+                            background: '#e6ffed',
+                            confirmButtonColor: '#28a745'
+                        }).then(() => {
+                            // Yorum başarıyla eklendiyse ve toksik değilse hemen listeye ekle
+                            if (result.comment && !result.comment.isToxic && result.comment.isValid) {
+                                appendCommentToList(result.comment);
+                            }
+                            $('#commentDetailInput').val(''); // Inputu temizle
+                        });
+                    } else if (result.type === "toxic") { // Toksik olarak algılanan yorum
+                        Swal.fire({
+                            icon: 'warning', // Toksik için uyarı ikonu
+                            title: 'Dikkat!',
+                            text: result.message, // "Yorumunuz toksik içerik barındırıyor ve admin onayı bekleyecektir."
+                            background: '#fff3cd', // Sarımsı uyarı rengi
+                            confirmButtonColor: '#ffc107' // Uyarı butonu rengi
+                        }).then(() => {
+                            // Toksik yorumu listeye eklemiyoruz çünkü admin onayı bekleyecek
+                            $('#commentDetailInput').val(''); // Inputu temizle
+                        });
+                    } else if (result.type === "error") { // Controller'dan gelen özel hata (örn: çeviri hatası)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: result.message,
+                            background: '#ffe6e6',
+                            confirmButtonColor: '#dc3545'
+                        }).then(() => {
+                            $('#commentDetailInput').val(''); // Inputu temizle
+                        });
+                    } else { // Beklenmedik bir yanıt formatı
+                         Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: "Beklenmedik bir yanıt alındı. Lütfen sayfayı yenileyin.",
+                            background: '#ffe6e6',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // AJAX isteği sırasında bir HTTP hatası veya ağ hatası oluşursa
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sunucu Hatası!',
+                        text: "Yorumunuz gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+                        background: '#ffe6e6',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    console.error("AJAX Error:", status, error, xhr.responseText);
+                }
+            });
+        });
+
+        // Yorumu listeye dinamik olarak ekleyen fonksiyon
+        function appendCommentToList(commentData) {
+            var commentHtml = `
+                <li class="comment">
+                    <div class="vcard">
+                        <img src="${commentData.userImageUrl}" alt="Image placeholder">
+                    </div>
+                    <div class="comment-body">
+                        <h3>${commentData.userNameSurname}</h3>
+                        <div class="meta">${commentData.commentDate}</div>
+                        <p>${commentData.commentDetail}</p>
+                        <p><a href="#" class="reply rounded">Yanıtla</a></p>
+                    </div>
+                </li>
+            `;
+            $('#commentsList').prepend(commentHtml); // Yeni yorumu en üste ekle
+        }
+
+        // Sayfa yüklendiğinde mevcut yorumları AJAX ile çekmek isterseniz (isteğe bağlı)
+        // var articleId = $('#articleIdInput').val();
+        // $.ajax({
+        //     url: "/Comment/GetCommentsByArticle",
+        //     type: "GET",
+        //     data: { articleId: articleId },
+        //     success: function (response) {
+        //         if (response.success) {
+        //             $('#commentsList').empty(); // Mevcut yorumları temizle
+        //             $.each(response.comments, function (index, comment) {
+        //                 // Yalnızca IsValid olanları ekleyin
+        //                 // if (comment.isValid) { // Controller'dan isValid'ı da döndürmeniz gerekir
+        //                     appendCommentToList(comment);
+        //                 // }
+        //             });
+        //         }
+        //     }
+        // });
+    });
+</script>

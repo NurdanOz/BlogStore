@@ -1,0 +1,73 @@
+﻿@model BlogStore.PresentationLayer.Controllers.Models.AuthorProfileDetailViewModel
+@{
+    Layout = null;
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(Model.ımageurl))
+                {
+                    <img src="@Model.ımageurl" class="card-img-top" alt="@Model.name @Model.surname" style="max-height: 250px; object-fit: cover;">
+                }
+                else
+                {
+                    <img src="/images/default-user.png" class="card-img-top" alt="Varsayılan Kullanıcı Resmi" style="max-height: 250px; object-fit: cover;">
+                }
+
+                <div class="card-body text-center d-flex flex-column justify-content-center"> 
+                    <h4 class="card-title mb-1">@Model.name @Model.surname</h4>
+                    <p class="card-text text-muted mb-2">@Model.Email</p> 
+                    @if (!string.IsNullOrEmpty(Model.description))
+                    {
+                        <p class="card-text flex-grow-1">@Model.description</p> 
+                    }
+                    else
+                    {
+                        <p class="card-text text-muted flex-grow-1">Yazar hakkında bilgi bulunmamaktadır.</p>
+                    }
+                    <a asp-controller="Author" asp-action="AuthorList" class="btn btn-secondary mt-3">Yazar Listesine Geri Dön</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h3 class="mb-4">@Model.name @Model.surname'in Makaleleri (@(Model.Articles?.Count ?? 0))</h3> 
+            @if (Model.Articles != null && Model.Articles.Any())
+            {
+                <div class="list-group">
+                    @foreach (var article in Model.Articles)
+                    {
+                        <a href="@Url.Action("ArticleDetail", "Article", new { slug = article.Slug })" class="list-group-item list-group-item-action flex-column align-items-start mb-3 border"> 
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@article.Title</h5>
+                                <small class="text-muted">@article.CreatedDate.ToShortDateString()</small>
+                            </div>
+                            @* Makale açıklaması ve üç nokta (...) *@
+                            <p class="mb-1">
+                                @if (!string.IsNullOrEmpty(article.Description) && article.Description.Length > 150)
+                                {
+                                    @(article.Description.Substring(0, 150))<span>...</span>
+                                }
+                                else if (!string.IsNullOrEmpty(article.Description))
+                                {
+                                    @article.Description
+                                }
+                            </p>
+                           
+                            <small class="text-muted mt-2 d-block">Kategori: @(article.category?.CategoryName ?? "Bilinmiyor")</small> 
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Bu yazarın henüz yayımlanmış makalesi bulunmamaktadır.</p>
+            }
+        </div>
+    </div>
+</div>
